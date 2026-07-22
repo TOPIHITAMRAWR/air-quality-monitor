@@ -1,0 +1,35 @@
+name: Fetch Air Quality Data
+
+on:
+  schedule:
+    # Jalan tiap 3 jam. Sintaks cron: menit jam hari bulan hari-minggu (UTC!)
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}   # supaya bisa trigger manual dari tab Actions di GitHub
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch data
+        env:
+          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
+        run: python src/fetch_data.py
+
+      - name: Commit database jika ada perubahan
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/air_quality.db
+          git diff --staged --quiet || git commit -m "Auto-fetch: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
