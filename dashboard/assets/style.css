@@ -1,0 +1,168 @@
+/* ===================================================================
+   Design Tokens — Dashboard Monitoring Kualitas Udara
+   Sumber: PRD Redesign section 5
+=================================================================== */
+
+:root {
+  --bg-primary: #0b0f19;
+  --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #131a2b 100%);
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --text-primary: #f5f6fa;
+  --text-secondary: #9aa4b8;
+  --status-good: #2ecc71;
+  --status-moderate: #f39c12;
+  --status-unhealthy: #e74c3c;
+  --accent: #6c8cff;
+  --card-radius: 18px;
+}
+
+/* --- Sembunyikan chrome default Streamlit (task 7.1.4) --- */
+#MainMenu, footer, header { visibility: hidden; height: 0; }
+.block-container {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+  max-width: 100%;
+}
+
+/* --- Background gradient (task 7.1.5) --- */
+.stApp {
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+}
+
+/* --- Base glass card, dipakai ulang di semua komponen --- */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 20px 22px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* --- Tipografi angka utama --- */
+.metric-value {
+  font-size: 46px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin: 4px 0;
+}
+.metric-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* --- Badge status --- */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0b0f19;
+}
+.badge-good { background: var(--status-good); }
+.badge-moderate { background: var(--status-moderate); }
+.badge-unhealthy { background: var(--status-unhealthy); }
+
+/* --- Grid kartu ringkasan (task 7.3.3), bukan st.columns --- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* --- Sidebar kustom (task 7.2) --- */
+section[data-testid="stSidebar"] {
+  background: rgba(11, 15, 25, 0.9);
+  border-right: 1px solid var(--glass-border);
+  min-width: 96px !important;
+  max-width: 96px !important;
+}
+section[data-testid="stSidebar"] .block-container {
+  padding: 24px 8px;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 4px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-item:hover {
+  background: var(--glass-bg);
+  color: var(--text-primary);
+}
+.nav-item.active {
+  background: var(--accent);
+  color: #0b0f19;
+  font-weight: 700;
+}
+.nav-item.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* --- Styling st.button di sidebar (keterbatasan: tidak bisa conditional
+   class "active" di widget native, lihat PRD section 4 risiko 1) --- */
+section[data-testid="stSidebar"] button {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+  font-size: 11px !important;
+  padding: 10px 4px !important;
+  border-radius: 12px !important;
+  text-align: left;
+}
+section[data-testid="stSidebar"] button:hover {
+  background: var(--glass-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* --- Scope styling st.tabs HANYA di container tab prediksi (task 7.6.3) --- */
+.forecast-tabs-scope div[data-testid="stTabs"] button {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.forecast-tabs-scope div[data-testid="stTabs"] button[aria-selected="true"] {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+/* --- Empty state (task 7.6.1) --- */
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-secondary);
+}
+.empty-state .progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.empty-state .progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
