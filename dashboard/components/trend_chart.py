@@ -28,18 +28,18 @@ def render_trend_chart(df: pd.DataFrame, city: str):
             x=city_df["datetime_wib"],
             y=city_df["pm2_5"],
             mode="lines",
-            line=dict(color="#6c8cff", width=2.5, shape="spline"),
+            line=dict(color="#e8823c", width=2.5, shape="spline"),
             fill="tozeroy",
-            fillcolor="rgba(108, 140, 255, 0.15)",
+            fillcolor="rgba(232, 130, 60, 0.15)",
             hovertemplate="%{x|%d %b %H:%M}<br>PM2.5: %{y:.1f} µg/m³<extra></extra>",
         )
     )
     fig.update_layout(
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#9aa4b8"),
+        font=dict(color="#c9a98a"),
         margin=dict(l=10, r=10, t=10, b=10),
-        height=300,
+        height=200,
         xaxis=dict(showgrid=False, showline=False, title=None),
         yaxis=dict(
             showgrid=True,

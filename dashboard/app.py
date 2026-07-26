@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-from utils.theme import load_css  # noqa: E402
+from utils.theme import load_css, render_theme_toggle  # noqa: E402
 from utils.data import load_all_readings, load_latest_per_city  # noqa: E402
 from components.sidebar import render_sidebar, render_disabled_page_notice  # noqa: E402
 from components.summary_cards import render_summary_cards  # noqa: E402
@@ -30,6 +30,10 @@ from config import CITIES  # noqa: E402
 
 load_css()
 current_page = render_sidebar()
+
+_, col_toggle = st.columns([8, 1])
+with col_toggle:
+    render_theme_toggle()
 
 
 def render_dashboard_page():

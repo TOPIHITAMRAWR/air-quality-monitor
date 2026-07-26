@@ -38,19 +38,21 @@ def render_sidebar() -> str:
 
             if not meta["enabled"]:
                 st.markdown(
-                    f'<div class="nav-item disabled" title="Segera hadir">'
-                    f'{meta["icon"]}<span>{meta["label"]}</span></div>',
+                    f'<div class="nav-item disabled" title="{meta["label"]} — segera hadir">'
+                    f'{meta["icon"]}</div>',
                     unsafe_allow_html=True,
                 )
                 continue
 
-            # Tombol asli Streamlit (perlu untuk trigger rerun + set query param).
-            # Halaman aktif ditandai bullet "●" di depan label — bukan class CSS,
-            # karena st.button tidak menerima conditional class (batasan widget native).
-            prefix = "●" if is_active else "○"
+            # FIX: sebelumnya label teks ("Dashboard") wrap jadi 2 baris jelek
+            # karena sidebar sempit (64px). Sekarang icon-only, label muncul
+            # sebagai tooltip native lewat parameter help= (fitur bawaan
+            # st.button, tidak perlu HTML/JS tambahan).
+            prefix = "●" if is_active else ""
             clicked = st.button(
-                f'{meta["icon"]} {prefix} {meta["label"]}',
+                f'{meta["icon"]}{prefix}',
                 key=f"nav_{key}",
+                help=f'{meta["label"]}{" (aktif)" if is_active else ""}',
                 width="stretch",
             )
             if clicked:

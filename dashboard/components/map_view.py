@@ -44,7 +44,7 @@ def render_map(latest_df: pd.DataFrame):
         hover_data={"aqi": True, "pm2_5": True, "lat": False, "lon": False},
         color_discrete_map=color_map,
         zoom=3.5,
-        height=420,
+        height=320,
     )
     fig.update_layout(
         mapbox_style="carto-darkmatter",
@@ -52,10 +52,15 @@ def render_map(latest_df: pd.DataFrame):
         paper_bgcolor="rgba(0,0,0,0)",
         legend=dict(
             bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#9aa4b8"),
+            font=dict(color="#c9a98a"),
         ),
     )
 
-    st.markdown('<div class="glass-card" style="padding:8px;">', unsafe_allow_html=True)
-    st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
-    st.markdown("</div>", unsafe_allow_html=True)
+    # FIX: sebelumnya pakai trik buka <div> di satu st.markdown lalu tutup
+    # di st.markdown lain, dengan st.plotly_chart di antaranya. Ternyata
+    # tidak konsisten (kadang chart dirender di luar div). st.container(
+    # border=True) adalah wadah SUNGGUHAN dari Streamlit, dijamin
+    # membungkus konten di dalamnya — styling-nya diatur lewat CSS
+    # selector [data-testid="stVerticalBlockBorderWrapper"] di style.css.
+    with st.container(border=True):
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})

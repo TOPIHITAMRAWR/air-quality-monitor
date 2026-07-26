@@ -23,10 +23,62 @@ AQI_SCALE = {
 
 
 def load_css():
-    """Baca style.css dan inject sekali di awal app.py."""
+    """
+    Baca style.css dan inject sekali di awal app.py, sekaligus terapkan
+    override tema terang kalau mode terang aktif.
+
+    CATATAN PENTING: toggle tema TIDAK memakai JavaScript sama sekali.
+    Percobaan awal pakai <script> untuk toggle class di client-side gagal
+    karena script yang di-inject lewat unsafe_allow_html (innerHTML) tidak
+    pernah dieksekusi browser — ini batasan platform web, bukan bug
+    Streamlit. Solusinya: Python yang langsung memutuskan nilai variabel
+    CSS mana yang dikirim, di-generate ulang tiap render sesuai
+    st.session_state["dark_mode"].
+    """
     with open(_CSS_PATH, "r", encoding="utf-8") as f:
         css = f.read()
+
+    is_light = st.session_state.get("dark_mode", True) is False
+    if is_light:
+        # Override token warna langsung di :root (bukan lewat class .theme-light,
+        # supaya tidak bergantung apa pun di client-side).
+        css += """
+        :root {
+          --bg-primary: #faf3ea !important;
+          --glass-bg: rgba(60, 35, 15, 0.045) !important;
+          --glass-border: rgba(60, 35, 15, 0.12) !important;
+          --text-primary: #2b1c0f !important;
+          --text-secondary: #8a6a4a !important;
+          --accent: #c96a2c !important;
+        }
+        .stApp {
+          background:
+            radial-gradient(circle at 12% 15%, rgba(232, 130, 60, 0.10), transparent 38%),
+            radial-gradient(circle at 88% 10%, rgba(180, 110, 60, 0.10), transparent 40%),
+            radial-gradient(circle at 78% 80%, rgba(200, 90, 30, 0.08), transparent 45%),
+            var(--bg-primary) !important;
+        }
+        section[data-testid="stSidebar"] {
+          background: rgba(250, 243, 234, 0.9) !important;
+        }
+        """
+
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
+
+def render_theme_toggle():
+    """Tombol toggle mode gelap/terang. Return True kalau mode saat ini gelap."""
+    if "dark_mode" not in st.session_state:
+        st.session_state["dark_mode"] = True
+
+    st.markdown('<div class="theme-toggle-btn">', unsafe_allow_html=True)
+    icon = "🌙" if st.session_state["dark_mode"] else "☀️"
+    if st.button(icon, key="theme_toggle", help="Ganti mode gelap/terang"):
+        st.session_state["dark_mode"] = not st.session_state["dark_mode"]
+        st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    return st.session_state["dark_mode"]
 
 
 def get_aqi_badge(aqi_value):
